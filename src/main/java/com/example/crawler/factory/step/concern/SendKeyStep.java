@@ -21,7 +21,7 @@ public class SendKeyStep extends StepAbstract {
     }
 
     @Override
-    public void internalExecute(WebDriverContext context, StepConfig stepConfig, CrawlerContext crawlerContext) {
+    public void process(WebDriverContext context, StepConfig stepConfig, CrawlerContext crawlerContext) {
         RemoteWebDriver webDriver = context.getWebDriver();
         WebElement webElement = getWebElement(webDriver, stepConfig);
         String value = stepConfig.getParameter(HTMLParamEnum.VALUE.value());

@@ -3,10 +3,14 @@ package com.example.crawler;
 import com.example.crawler.config.crawler.CrawlerConfig;
 import com.example.crawler.config.crawler.StepConfig;
 import com.example.crawler.config.crawler.context.CrawlerContext;
+import com.example.crawler.config.crawler.processor.ProcessorConfig;
 import com.example.crawler.config.selenium.WebDriverContext;
 import com.example.crawler.config.selenium.WebDriverFactory;
+import com.example.crawler.factory.processor.ProcessorFactory;
 import com.example.crawler.factory.step.StepAbstract;
 import com.example.crawler.factory.step.StepFactory;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -29,6 +33,9 @@ public class CrawlerApplication {
     @Autowired
     private StepFactory stepFactory;
 
+    @Autowired
+    private ProcessorFactory processorFactory;
+
     public static void main(String[] args) {
         SpringApplication.run(CrawlerApplication.class, args);
     }
@@ -36,17 +43,29 @@ public class CrawlerApplication {
     @Bean
     public ApplicationRunner applicationRunner() {
         return args -> {
-            try (WebDriverContext webDriverContext = driverFactory.create()) {
-                List<StepConfig> steps = config.getSteps();
-                CrawlerContext crawlerContext = new CrawlerContext();
-                int i = 0;
-                for (StepConfig step : steps) {
-                    i++;
-                    StepAbstract stepAbstract = stepFactory.getStep(step.getType().value());
-                    stepAbstract.execute(i, webDriverContext, step, crawlerContext);
-                }
-                System.out.println(crawlerContext);
-            }
+//            try (WebDriverContext webDriverContext = driverFactory.create()) {
+//                List<StepConfig> steps = config.getSteps();
+//                CrawlerContext crawlerContext = new CrawlerContext();
+//                int i = 0;
+//                for (StepConfig step : steps) {
+//                    i++;
+//                    StepAbstract stepAbstract = stepFactory.getStep(step.getType().value());
+//                    stepAbstract.execute(i, webDriverContext, step, crawlerContext);
+//                }
+//                List<ProcessorConfig> processors = config.getProcessors();
+//                for (ProcessorConfig processor : processors) {
+//                    processorFactory.getProcessor(processor.getType().value())
+//                            .execute(webDriverContext, crawlerContext, processor);
+//                }
+//            }
+            String json = "{ \"users\": ["
+                    + "{ \"id\": 1, \"name\": \"Alice\", \"roles\": [\"admin\"] },"
+                    + "{ \"id\": 2, \"name\": \"Bob\", \"roles\": [\"user\"] }"
+                    + "]}";
+
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(json);
+            System.out.println(root.at("/users").asText());
         };
     }
 

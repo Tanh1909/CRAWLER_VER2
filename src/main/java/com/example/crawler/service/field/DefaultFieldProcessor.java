@@ -1,6 +1,5 @@
 package com.example.crawler.service.field;
 
-import com.example.crawler.config.crawler.field.FieldConfig;
 import com.example.crawler.config.crawler.field.FieldProcessorConfig;
 import com.example.crawler.data.enums.FieldProcessorTypeEnum;
 import com.example.crawler.data.enums.FieldTypeEnum;
@@ -77,9 +76,8 @@ public class DefaultFieldProcessor implements FieldProcessor {
     }
 
     @Override
-    public Object convertFieldType(Object rawValue, FieldConfig fieldConfig) {
+    public Object convertFieldType(Object rawValue, FieldTypeEnum fieldType) {
         if (rawValue == null) return null;
-        FieldTypeEnum fieldType = fieldConfig.getFieldType();
         String rawValueString = rawValue.toString();
         return switch (fieldType) {
             case TEXT -> rawValueString;

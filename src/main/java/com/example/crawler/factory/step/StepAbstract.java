@@ -27,7 +27,7 @@ public abstract class StepAbstract {
         try {
             log.info("[{}] - [StartStep.{}] Start execute step [name: {}, type: {}]", sessionId, stepNum, stepName, stepType);
             applyDelay(stepConfig, sessionId);
-            internalExecute(webDriverContext, stepConfig, crawlerContext);
+            process(webDriverContext, stepConfig, crawlerContext);
         } catch (Exception e) {
             crawlerContext.addStepError(new CrawlerError(stepNum, stepName, e.getMessage(), e));
             log.error("[{}] - [ErrorStep.{}] Error when execute step [name: {}, type: {}]", sessionId, stepNum, stepName, stepType);
@@ -51,9 +51,9 @@ public abstract class StepAbstract {
         int delaySeconds = step.getDelay();
         if (delaySeconds > 1) {
             try {
-                log.debug("[{}] Start sleep {} seconds", sessionId, delaySeconds);
+                log.debug("[{}] -  Start delay for {} seconds", sessionId, delaySeconds);
                 Thread.sleep(Duration.ofSeconds(delaySeconds));
-                log.debug("[{}] End sleep {} seconds", sessionId, delaySeconds);
+                log.debug("[{}] -  End delay for {} seconds", sessionId, delaySeconds);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
@@ -61,6 +61,6 @@ public abstract class StepAbstract {
     }
 
 
-    public abstract void internalExecute(WebDriverContext context, StepConfig stepConfig, CrawlerContext crawlerContext);
+    public abstract void process(WebDriverContext context, StepConfig stepConfig, CrawlerContext crawlerContext);
 
 }

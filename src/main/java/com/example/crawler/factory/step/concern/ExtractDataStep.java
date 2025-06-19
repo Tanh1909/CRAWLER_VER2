@@ -38,7 +38,7 @@ public class ExtractDataStep extends StepAbstract {
 
     @SneakyThrows
     @Override
-    public void internalExecute(WebDriverContext context, StepConfig stepConfig, CrawlerContext crawlerContext) {
+    public void process(WebDriverContext context, StepConfig stepConfig, CrawlerContext crawlerContext) {
         String sessionId = context.getSessionId();
         RemoteWebDriver webDriver = context.getWebDriver();
         List<FieldConfig> fieldConfigs = stepConfig.getFields();
@@ -58,7 +58,7 @@ public class ExtractDataStep extends StepAbstract {
                 for (FieldProcessorConfig processorConfig : processors) {
                     rawValue = fieldProcessor.process(rawValue, processorConfig);
                 }
-                Object objectValue = fieldProcessor.convertFieldType(rawValue, fieldConfig);
+                Object objectValue = fieldProcessor.convertFieldType(rawValue, fieldConfig.getFieldType());
                 if (fieldConfig.isGlobal()) {
                     log.debug("[{}] add global field[{} - {}]", sessionId, fieldName, objectValue);
                     crawlerContext.addGlobalField(fieldName, objectValue);

@@ -20,7 +20,7 @@ public class GetUrlStep extends StepAbstract {
     }
 
     @Override
-    public void internalExecute(WebDriverContext context, StepConfig stepConfig, CrawlerContext crawlerContext) {
+    public void process(WebDriverContext context, StepConfig stepConfig, CrawlerContext crawlerContext) {
         RemoteWebDriver webDriver = context.getWebDriver();
         String urlParameter = stepConfig.getParameter(HTMLParamEnum.URL.value());
         webDriver.get(urlParameter);

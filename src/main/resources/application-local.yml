@@ -10,7 +10,6 @@ selenium:
       - "--log-level=3"
       - "--allow-insecure-localhost"
 
-
 logging:
   level:
     com.example.crawler: debug
@@ -166,3 +165,7 @@ crawler:
             - type: regex_extract
               parameters:
                 pattern: \d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2}
+  processors:
+    - type: kafka
+      parameters:
+        topic: SI_TOPIC_DATA
