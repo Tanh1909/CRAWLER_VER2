@@ -1,0 +1,17 @@
+server:
+  port: 8080
+selenium:
+  remote:
+    url: http://10.254.61.26:8044
+  chrome:
+    page-load-strategy: eager
+    arguments:
+      - "--ignore-certificate-errors"
+      - "--log-level=3"
+      - "--allow-insecure-localhost"
+
+
+logging:
+  level:
+    com.example.crawler: debug
+    org.openqa.selenium.devtools: off

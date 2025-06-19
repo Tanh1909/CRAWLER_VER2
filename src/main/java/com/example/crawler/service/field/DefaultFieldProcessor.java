@@ -1,0 +1,125 @@
+package com.example.crawler.service.field;
+
+import com.example.crawler.config.crawler.field.FieldConfig;
+import com.example.crawler.config.crawler.field.FieldProcessorConfig;
+import com.example.crawler.data.enums.FieldTypeEnum;
+import com.example.crawler.data.enums.ProcessorTypeEnum;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.stereotype.Service;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static com.example.crawler.data.enums.ParameterEnum.*;
+
+@Log4j2
+@Service
+@RequiredArgsConstructor
+public class DefaultFieldProcessor implements FieldProcessor {
+
+    @Override
+    public Object process(Object rawValue, FieldProcessorConfig config) {
+        if (rawValue == null) return null;
+        String rawValueString = rawValue.toString();
+        ProcessorTypeEnum type = config.getType();
+        return switch (type) {
+            case TRIM -> rawValue.toString();
+            case UPPERCASE -> rawValueString.toUpperCase();
+            case LOWERCASE -> rawValueString.toLowerCase();
+            case SUBSTRING -> {
+                int start = Integer.parseInt(config.getParam(START.value(), "0"));
+                int end = config.getParam(END.value()) != null ?
+                        Integer.parseInt(config.getParam(END.value())) : rawValueString.length();
+                yield rawValueString.substring(start, end);
+            }
+            case REPLACE -> rawValueString.replace(
+                    config.getParam(OLD.value()),
+                    config.getParam(NEW.value())
+            );
+            case REGEX_EXTRACT -> {
+                Pattern patternExtract = Pattern.compile(config.getParam(PATTERN.value()));
+                Matcher matcherExtract = patternExtract.matcher(rawValueString);
+                if (matcherExtract.find()) {
+                    yield matcherExtract.group(1);
+                }
+                yield null;
+            }
+            case REGEX_REPLACE -> rawValueString.replaceAll(
+                    config.getParam(PATTERN.value()),
+                    config.getParam(REPLACEMENT.value())
+            );
+            case DATE_FORMAT -> {
+                SimpleDateFormat inputFormat = new SimpleDateFormat(config.getParam(INPUT_FORMAT.value()));
+                SimpleDateFormat outputFormat = new SimpleDateFormat(config.getParam(OUTPUT_FORMAT.value()));
+                try {
+                    Date date = inputFormat.parse(rawValueString);
+                    yield outputFormat.format(date);
+                } catch (ParseException e) {
+                    yield null;
+                }
+            }
+            case MATH_EXPRESSION -> null;
+            case URL_ENCODE -> URLEncoder.encode(rawValueString, StandardCharsets.UTF_8);
+            case NONE -> rawValue;
+        };
+    }
+
+    @Override
+    public Object convertFieldType(Object rawValue, FieldConfig fieldConfig) {
+        if (rawValue == null) return null;
+        FieldTypeEnum fieldType = fieldConfig.getFieldType();
+        String rawValueString = rawValue.toString();
+        return switch (fieldType) {
+            case TEXT -> rawValueString;
+            case NUMBER -> parseNumber(rawValueString);
+            case BOOLEAN -> parseBoolean(rawValueString);
+            case DATE -> parseDate(rawValueString);
+        };
+    }
+
+    private Date parseDate(String value) {
+        String format;
+        if (value.matches("\\d{4}-\\d{2}-\\d{2}")) format = "yyyy-MM-dd";              // 2024-06-18
+        else if (value.matches("\\d{2}/\\d{2}/\\d{4}")) format = "dd/MM/yyyy";         // 18/06/2024
+        else if (value.matches("\\d{2}-\\d{2}-\\d{4}")) format = "dd-MM-yyyy";         // 18-06-2024
+        else if (value.matches("\\d{2}\\.\\d{2}\\.\\d{4}")) format = "dd.MM.yyyy";     // 18.06.2024
+        else if (value.matches("\\d{4}/\\d{2}/\\d{2}")) format = "yyyy/MM/dd";         // 2024/06/18
+        else if (value.matches("\\d{2}\\s[a-zA-Z]+\\s\\d{4}")) format = "dd MMM yyyy"; // 18 Jun 2024
+        else if (value.matches("[a-zA-Z]+\\s\\d{2},\\s\\d{4}")) format = "MMMM dd, yyyy"; // June 18, 2024
+        else if (value.matches("\\d{4}\\d{2}\\d{2}")) format = "yyyyMMdd";             // 20240618
+        else return null;
+        try {
+            return new SimpleDateFormat(format).parse(value);
+        } catch (Exception e) {
+            log.error("cannot parseDate: {} because: {}", value, e.getMessage());
+            return null;
+        }
+    }
+
+    private Number parseNumber(String value) {
+        try {
+            value = value.replaceAll("[^\\d.,-]", "");
+            if (value.contains(",") && value.contains(".")) {
+                value = value.replace(".", "").replace(",", ".");
+            } else if (value.contains(",")) {
+                value = value.replace(",", "");
+            }
+            return Double.parseDouble(value);
+        } catch (Exception e) {
+            log.error("cannot parseNumber: {} because: {}", value, e.getMessage());
+            return null;
+        }
+    }
+
+    private Boolean parseBoolean(String value) {
+        return "true".equalsIgnoreCase(value) ||
+                "1".equals(value) ||
+                "yes".equalsIgnoreCase(value);
+    }
+}
