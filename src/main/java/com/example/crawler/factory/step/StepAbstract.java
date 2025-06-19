@@ -24,20 +24,20 @@ public abstract class StepAbstract {
         String sessionId = webDriverContext.getSessionId();
         String stepName = stepConfig.getName();
         StepType stepType = stepConfig.getType();
-        log.info("[{}] - [stepNum.{}] Start execute step [name: {}, type: {}]", sessionId, stepNum, stepName, stepType);
+        log.info("[{}] - [StartStep.{}] Start execute step [name: {}, type: {}]", sessionId, stepNum, stepName, stepType);
         try {
+            applyDelay(stepConfig, sessionId);
             internalExecute(webDriverContext, stepConfig, crawlerContext);
-            applyDelay(stepConfig);
         } catch (Exception e) {
             crawlerContext.addStepError(new CrawlerError(stepNum, stepName, e.getMessage(), e));
-            log.error("[{}] - [stepNum.{}] Error when execute step [name: {}, type: {}]", sessionId, stepNum, stepName, stepType);
+            log.error("[{}] - [ErrorStep.{}] Error when execute step [name: {}, type: {}]", sessionId, stepNum, stepName, stepType);
         }
-        log.info("[{}] - [stepNum.{}] End execute step [name: {}, type: {}]", sessionId, stepNum, stepName, stepType);
+        log.info("[{}] - [EndStep.{}] End execute step", sessionId, stepNum);
     }
 
     protected WebElement getWebElement(WebDriver webDriver, StepConfig stepConfig) {
         By by = getBy(stepConfig);
-        return WebElementUtils.getWebElementVisibility(webDriver, by, stepConfig.getTimeOut());
+        return WebElementUtils.getWebElementWithRetry(webDriver, by, stepConfig.getTimeOut());
     }
 
     protected By getBy(StepConfig stepConfig) {
@@ -46,11 +46,13 @@ public abstract class StepAbstract {
         return WebElementUtils.getBy(selectorType, selector);
     }
 
-    private void applyDelay(StepConfig step) {
+    private void applyDelay(StepConfig step, String sessionId) {
         int delaySeconds = step.getDelay();
-        if (delaySeconds > 0) {
+        if (delaySeconds > 1) {
             try {
+                log.debug("[{}] Start sleep {} seconds", sessionId, delaySeconds);
                 Thread.sleep(Duration.ofSeconds(delaySeconds));
+                log.debug("[{}] End sleep {} seconds", sessionId, delaySeconds);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }

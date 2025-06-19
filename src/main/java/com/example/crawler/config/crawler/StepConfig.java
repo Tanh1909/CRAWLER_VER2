@@ -22,7 +22,7 @@ public class StepConfig {
 
     private List<FieldConfig> fields = new ArrayList<>();
 
-    private int delay = 0; //second
+    private int delay = 1; //second
 
     private int timeOut = 10; //second
 

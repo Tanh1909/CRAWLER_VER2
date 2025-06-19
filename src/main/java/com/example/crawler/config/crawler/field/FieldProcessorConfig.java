@@ -22,4 +22,9 @@ public class FieldProcessorConfig {
     public String getParam(String key, String defaultValue) {
         return parameters.getOrDefault(key, defaultValue);
     }
+
+    public Integer getIntParam(String key, Integer defaultValue) {
+        String stringParam = parameters.get(key);
+        return stringParam == null ? defaultValue : Integer.parseInt(stringParam, defaultValue);
+    }
 }

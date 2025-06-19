@@ -7,11 +7,14 @@ public enum ParameterEnum {
 
     //for click
     URL("url"),
+    RETRY("retry"),
+    RETRY_DELAY("retryDelay"),
 
     //for get By
     SELECTOR("selector"),
     SELECTOR_TYPE("selectorType"),
     VALUE("value"),
+    ATTRIBUTE("attribute"),
 
     //processor
     START("start"),
@@ -19,9 +22,11 @@ public enum ParameterEnum {
     OLD("old"),
     NEW("new"),
     PATTERN("pattern"),
+    GROUP("group"),
     REPLACEMENT("replacement"),
     INPUT_FORMAT("inputFormat"),
     OUTPUT_FORMAT("outputFormat"),
+
     ;
 
     private final String value;

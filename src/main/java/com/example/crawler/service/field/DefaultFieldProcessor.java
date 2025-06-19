@@ -12,7 +12,12 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,9 +49,10 @@ public class DefaultFieldProcessor implements FieldProcessor {
             );
             case REGEX_EXTRACT -> {
                 Pattern patternExtract = Pattern.compile(config.getParam(PATTERN.value()));
+                Integer groupNum = config.getIntParam(GROUP.value(), 0);
                 Matcher matcherExtract = patternExtract.matcher(rawValueString);
                 if (matcherExtract.find()) {
-                    yield matcherExtract.group(1);
+                    yield matcherExtract.group(groupNum);
                 }
                 yield null;
             }
@@ -79,21 +85,34 @@ public class DefaultFieldProcessor implements FieldProcessor {
             case TEXT -> rawValueString;
             case NUMBER -> parseNumber(rawValueString);
             case BOOLEAN -> parseBoolean(rawValueString);
-            case DATE -> parseDate(rawValueString);
+            case DATE -> parseToLocalDateTime(rawValueString);
         };
     }
 
     private Date parseDate(String value) {
         String format;
-        if (value.matches("\\d{4}-\\d{2}-\\d{2}")) format = "yyyy-MM-dd";              // 2024-06-18
-        else if (value.matches("\\d{2}/\\d{2}/\\d{4}")) format = "dd/MM/yyyy";         // 18/06/2024
-        else if (value.matches("\\d{2}-\\d{2}-\\d{4}")) format = "dd-MM-yyyy";         // 18-06-2024
-        else if (value.matches("\\d{2}\\.\\d{2}\\.\\d{4}")) format = "dd.MM.yyyy";     // 18.06.2024
-        else if (value.matches("\\d{4}/\\d{2}/\\d{2}")) format = "yyyy/MM/dd";         // 2024/06/18
+
+        if (value.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}"))
+            format = "yyyy-MM-dd HH:mm:ss";       // 2024-06-18 10:30:00
+        else if (value.matches("\\d{2}/\\d{2}/\\d{4} \\d{2}:\\d{2}:\\d{2}"))
+            format = "dd/MM/yyyy HH:mm:ss"; // 18/06/2024 10:30:00
+        else if (value.matches("\\d{2}-\\d{2}-\\d{4} \\d{2}:\\d{2}:\\d{2}"))
+            format = "dd-MM-yyyy HH:mm:ss"; // 18-06-2024 10:30:00
+        else if (value.matches("\\d{4}/\\d{2}/\\d{2} \\d{2}:\\d{2}:\\d{2}"))
+            format = "yyyy/MM/dd HH:mm:ss"; // 2024/06/18 10:30:00
+        else if (value.matches("\\d{2}\\.\\d{2}\\.\\d{4} \\d{2}:\\d{2}:\\d{2}"))
+            format = "dd.MM.yyyy HH:mm:ss"; // 18.06.2024 10:30:00
+
+        else if (value.matches("\\d{4}-\\d{2}-\\d{2}")) format = "yyyy-MM-dd";
+        else if (value.matches("\\d{2}/\\d{2}/\\d{4}")) format = "dd/MM/yyyy";
+        else if (value.matches("\\d{2}-\\d{2}-\\d{4}")) format = "dd-MM-yyyy";
+        else if (value.matches("\\d{2}\\.\\d{2}\\.\\d{4}")) format = "dd.MM.yyyy";
+        else if (value.matches("\\d{4}/\\d{2}/\\d{2}")) format = "yyyy/MM/dd";
         else if (value.matches("\\d{2}\\s[a-zA-Z]+\\s\\d{4}")) format = "dd MMM yyyy"; // 18 Jun 2024
         else if (value.matches("[a-zA-Z]+\\s\\d{2},\\s\\d{4}")) format = "MMMM dd, yyyy"; // June 18, 2024
-        else if (value.matches("\\d{4}\\d{2}\\d{2}")) format = "yyyyMMdd";             // 20240618
+        else if (value.matches("\\d{4}\\d{2}\\d{2}")) format = "yyyyMMdd"; // 20240618
         else return null;
+
         try {
             return new SimpleDateFormat(format).parse(value);
         } catch (Exception e) {
@@ -101,6 +120,55 @@ public class DefaultFieldProcessor implements FieldProcessor {
             return null;
         }
     }
+
+    public static LocalDateTime parseToLocalDateTime(String value) {
+        DateTimeFormatter formatter;
+
+        // LocalDateTime formats (có cả ngày + giờ)
+        if (value.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}"))
+            formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        else if (value.matches("\\d{2}/\\d{2}/\\d{4} \\d{2}:\\d{2}:\\d{2}"))
+            formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        else if (value.matches("\\d{2}-\\d{2}-\\d{4} \\d{2}:\\d{2}:\\d{2}"))
+            formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        else if (value.matches("\\d{4}/\\d{2}/\\d{2} \\d{2}:\\d{2}:\\d{2}"))
+            formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        else if (value.matches("\\d{2}\\.\\d{2}\\.\\d{4} \\d{2}:\\d{2}:\\d{2}"))
+            formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+
+            // LocalDate only (nếu không có thời gian, sẽ gán mặc định giờ = 00:00:00)
+        else if (value.matches("\\d{4}-\\d{2}-\\d{2}"))
+            formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        else if (value.matches("\\d{2}/\\d{2}/\\d{4}"))
+            formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        else if (value.matches("\\d{2}-\\d{2}-\\d{4}"))
+            formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        else if (value.matches("\\d{2}\\.\\d{2}\\.\\d{4}"))
+            formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        else if (value.matches("\\d{4}/\\d{2}/\\d{2}"))
+            formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        else if (value.matches("\\d{2}\\s[a-zA-Z]+\\s\\d{4}"))
+            formatter = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.ENGLISH);
+        else if (value.matches("[a-zA-Z]+\\s\\d{2},\\s\\d{4}"))
+            formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy", Locale.ENGLISH);
+        else if (value.matches("\\d{4}\\d{2}\\d{2}"))
+            formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        else
+            return null;
+
+        try {
+            if (formatter.toString().contains("H")) {
+                return LocalDateTime.parse(value, formatter);
+            } else {
+                LocalDate date = LocalDate.parse(value, formatter);
+                return date.atStartOfDay(); // mặc định giờ 00:00:00
+            }
+        } catch (DateTimeParseException e) {
+            log.error("Cannot parse localDateTime: {} - {}", value, e.getMessage());
+            return null;
+        }
+    }
+
 
     private Number parseNumber(String value) {
         try {

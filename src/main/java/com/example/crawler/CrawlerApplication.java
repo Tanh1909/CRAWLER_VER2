@@ -1,11 +1,12 @@
 package com.example.crawler;
 
+import com.example.crawler.config.crawler.CrawlerConfig;
+import com.example.crawler.config.crawler.StepConfig;
+import com.example.crawler.config.crawler.context.CrawlerContext;
 import com.example.crawler.config.selenium.WebDriverContext;
 import com.example.crawler.config.selenium.WebDriverFactory;
-import org.openqa.selenium.devtools.DevTools;
-import org.openqa.selenium.devtools.v114.network.Network;
-import org.openqa.selenium.devtools.v114.network.model.RequestId;
-import org.openqa.selenium.remote.RemoteWebDriver;
+import com.example.crawler.factory.step.StepAbstract;
+import com.example.crawler.factory.step.StepFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -13,7 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
-import java.time.Duration;
+import java.util.List;
 
 @SpringBootApplication
 @EnableConfigurationProperties
@@ -21,6 +22,12 @@ public class CrawlerApplication {
 
     @Autowired
     private WebDriverFactory driverFactory;
+
+    @Autowired
+    private CrawlerConfig config;
+
+    @Autowired
+    private StepFactory stepFactory;
 
     public static void main(String[] args) {
         SpringApplication.run(CrawlerApplication.class, args);
@@ -30,15 +37,15 @@ public class CrawlerApplication {
     public ApplicationRunner applicationRunner() {
         return args -> {
             try (WebDriverContext webDriverContext = driverFactory.create()) {
-                RemoteWebDriver webDriver = webDriverContext.getWebDriver();
-                DevTools devTools = webDriverContext.getDevTools();
-                devTools.addListener(Network.requestWillBeSent(), request -> {
-                    String url = request.getRequest().getUrl();
-                    RequestId requestId = request.getRequestId();
-                    System.out.println(url + "--- " + requestId);
-                });
-                webDriver.get("https://mbpc.amione.vn/login");
-                Thread.sleep(Duration.ofSeconds(10));
+                List<StepConfig> steps = config.getSteps();
+                CrawlerContext crawlerContext = new CrawlerContext();
+                int i = 0;
+                for (StepConfig step : steps) {
+                    i++;
+                    StepAbstract stepAbstract = stepFactory.getStep(step.getType().value());
+                    stepAbstract.execute(i, webDriverContext, step, crawlerContext);
+                }
+                System.out.println(crawlerContext);
             }
         };
     }
