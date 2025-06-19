@@ -5,8 +5,8 @@ import com.example.crawler.config.crawler.context.CrawlerContext;
 import com.example.crawler.config.crawler.field.FieldConfig;
 import com.example.crawler.config.crawler.field.FieldProcessorConfig;
 import com.example.crawler.config.selenium.WebDriverContext;
-import com.example.crawler.data.enums.ParameterEnum;
-import com.example.crawler.data.enums.StepType;
+import com.example.crawler.data.enums.HTMLParamEnum;
+import com.example.crawler.data.enums.StepTypeEnum;
 import com.example.crawler.factory.step.StepAbstract;
 import com.example.crawler.service.field.FieldProcessor;
 import com.example.crawler.utils.WebElementUtils;
@@ -32,8 +32,8 @@ public class ExtractDataStep extends StepAbstract {
     private final ObjectMapper objectMapper;
 
     @Override
-    public StepType getType() {
-        return StepType.EXTRACT_DATA;
+    public StepTypeEnum getType() {
+        return StepTypeEnum.EXTRACT_DATA;
     }
 
     @SneakyThrows
@@ -46,9 +46,9 @@ public class ExtractDataStep extends StepAbstract {
         for (FieldConfig fieldConfig : fieldConfigs) {
             try {
                 String fieldName = fieldConfig.getFieldName();
-                String selector = fieldConfig.getParameter(ParameterEnum.SELECTOR.value());
-                String selectorType = fieldConfig.getParameter(ParameterEnum.SELECTOR_TYPE.value());
-                String attribute = fieldConfig.getParameter(ParameterEnum.ATTRIBUTE.value(), null);
+                String selector = fieldConfig.getParameter(HTMLParamEnum.SELECTOR.value());
+                String selectorType = fieldConfig.getParameter(HTMLParamEnum.SELECTOR_TYPE.value());
+                String attribute = fieldConfig.getParameter(HTMLParamEnum.ATTRIBUTE.value(), null);
 
                 By by = WebElementUtils.getBy(selectorType, selector);
                 WebElement webElement = WebElementUtils.getWebElementWithRetry(webDriver, by);

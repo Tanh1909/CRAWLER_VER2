@@ -1,6 +1,6 @@
 package com.example.crawler.utils;
 
-import com.example.crawler.data.enums.SelectorType;
+import com.example.crawler.data.enums.SelectorTypeEnum;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -61,7 +61,7 @@ public class WebElementUtils {
     }
 
     public static By getBy(String locatorType, String locatorValue) throws IllegalArgumentException {
-        SelectorType type = SelectorType.from(locatorType);
+        SelectorTypeEnum type = SelectorTypeEnum.from(locatorType);
         return switch (type) {
             case ID -> By.id(locatorValue);
             case NAME -> By.name(locatorValue);

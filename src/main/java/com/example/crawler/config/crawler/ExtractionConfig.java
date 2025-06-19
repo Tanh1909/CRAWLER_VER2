@@ -1,6 +1,6 @@
 package com.example.crawler.config.crawler;
 
-import com.example.crawler.data.enums.SelectorType;
+import com.example.crawler.data.enums.SelectorTypeEnum;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +10,7 @@ public class ExtractionConfig {
 
     private String fieldName;
 
-    private SelectorType selectorType;
+    private SelectorTypeEnum selectorType;
 
     private String selector;
 

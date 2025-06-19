@@ -1,6 +1,6 @@
 package com.example.crawler.factory.step;
 
-import com.example.crawler.data.enums.StepType;
+import com.example.crawler.data.enums.StepTypeEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +13,7 @@ public class StepFactory {
     private final List<StepAbstract> stepAbstracts;
 
     public StepAbstract getStep(String stepType) {
-        StepType stepTypeEnum = StepType.from(stepType);
+        StepTypeEnum stepTypeEnum = StepTypeEnum.from(stepType);
         for (StepAbstract stepAbstract : stepAbstracts) {
             if (stepAbstract.getType().equals(stepTypeEnum)) {
                 return stepAbstract;

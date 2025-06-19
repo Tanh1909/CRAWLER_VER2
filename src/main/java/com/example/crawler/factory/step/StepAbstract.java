@@ -3,9 +3,9 @@ package com.example.crawler.factory.step;
 import com.example.crawler.config.crawler.StepConfig;
 import com.example.crawler.config.crawler.context.CrawlerContext;
 import com.example.crawler.config.selenium.WebDriverContext;
-import com.example.crawler.data.enums.ParameterEnum;
-import com.example.crawler.data.enums.SelectorType;
-import com.example.crawler.data.enums.StepType;
+import com.example.crawler.data.enums.HTMLParamEnum;
+import com.example.crawler.data.enums.SelectorTypeEnum;
+import com.example.crawler.data.enums.StepTypeEnum;
 import com.example.crawler.data.model.CrawlerError;
 import com.example.crawler.utils.WebElementUtils;
 import lombok.extern.log4j.Log4j2;
@@ -18,21 +18,22 @@ import java.time.Duration;
 @Log4j2
 public abstract class StepAbstract {
 
-    public abstract StepType getType();
+    public abstract StepTypeEnum getType();
 
     public void execute(Integer stepNum, WebDriverContext webDriverContext, StepConfig stepConfig, CrawlerContext crawlerContext) {
         String sessionId = webDriverContext.getSessionId();
         String stepName = stepConfig.getName();
-        StepType stepType = stepConfig.getType();
-        log.info("[{}] - [StartStep.{}] Start execute step [name: {}, type: {}]", sessionId, stepNum, stepName, stepType);
+        StepTypeEnum stepType = stepConfig.getType();
         try {
+            log.info("[{}] - [StartStep.{}] Start execute step [name: {}, type: {}]", sessionId, stepNum, stepName, stepType);
             applyDelay(stepConfig, sessionId);
             internalExecute(webDriverContext, stepConfig, crawlerContext);
         } catch (Exception e) {
             crawlerContext.addStepError(new CrawlerError(stepNum, stepName, e.getMessage(), e));
             log.error("[{}] - [ErrorStep.{}] Error when execute step [name: {}, type: {}]", sessionId, stepNum, stepName, stepType);
+        } finally {
+            log.info("[{}] - [EndStep.{}] End execute step", sessionId, stepNum);
         }
-        log.info("[{}] - [EndStep.{}] End execute step", sessionId, stepNum);
     }
 
     protected WebElement getWebElement(WebDriver webDriver, StepConfig stepConfig) {
@@ -41,8 +42,8 @@ public abstract class StepAbstract {
     }
 
     protected By getBy(StepConfig stepConfig) {
-        String selector = stepConfig.getParameter(ParameterEnum.SELECTOR.value());
-        String selectorType = stepConfig.getParameter(ParameterEnum.SELECTOR_TYPE.value(), SelectorType.ID.value());
+        String selector = stepConfig.getParameter(HTMLParamEnum.SELECTOR.value());
+        String selectorType = stepConfig.getParameter(HTMLParamEnum.SELECTOR_TYPE.value(), SelectorTypeEnum.ID.value());
         return WebElementUtils.getBy(selectorType, selector);
     }
 

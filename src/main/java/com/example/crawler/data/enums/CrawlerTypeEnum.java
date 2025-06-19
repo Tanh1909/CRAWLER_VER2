@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum CrawlerType {
+public enum CrawlerTypeEnum {
     HTML,API
 }

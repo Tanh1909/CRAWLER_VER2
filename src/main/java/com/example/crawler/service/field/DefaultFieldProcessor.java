@@ -2,8 +2,8 @@ package com.example.crawler.service.field;
 
 import com.example.crawler.config.crawler.field.FieldConfig;
 import com.example.crawler.config.crawler.field.FieldProcessorConfig;
+import com.example.crawler.data.enums.FieldProcessorTypeEnum;
 import com.example.crawler.data.enums.FieldTypeEnum;
-import com.example.crawler.data.enums.ProcessorTypeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.example.crawler.data.enums.ParameterEnum.*;
+import static com.example.crawler.data.enums.FieldProcessorParamEnum.*;
 
 @Log4j2
 @Service
@@ -32,7 +32,7 @@ public class DefaultFieldProcessor implements FieldProcessor {
     public Object process(Object rawValue, FieldProcessorConfig config) {
         if (rawValue == null) return null;
         String rawValueString = rawValue.toString();
-        ProcessorTypeEnum type = config.getType();
+        FieldProcessorTypeEnum type = config.getType();
         return switch (type) {
             case TRIM -> rawValue.toString();
             case UPPERCASE -> rawValueString.toUpperCase();

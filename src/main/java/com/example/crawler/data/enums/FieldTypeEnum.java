@@ -5,5 +5,4 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public enum FieldTypeEnum {
     TEXT, NUMBER, BOOLEAN, DATE
-
 }

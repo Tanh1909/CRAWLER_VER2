@@ -3,7 +3,7 @@ package com.example.crawler.data.enums;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public enum StepType {
+public enum StepTypeEnum {
     GET_URL("GET_URL"),
     SEND_KEY("SEND_KEY"),
     CLICK("CLICK"),
@@ -18,8 +18,8 @@ public enum StepType {
         return this.value;
     }
 
-    public static StepType from(String value) {
-        for (StepType stepType : StepType.values()) {
+    public static StepTypeEnum from(String value) {
+        for (StepTypeEnum stepType : StepTypeEnum.values()) {
             if (stepType.value.equalsIgnoreCase(value)) {
                 return stepType;
             }

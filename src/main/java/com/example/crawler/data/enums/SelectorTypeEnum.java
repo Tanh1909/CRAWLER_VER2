@@ -3,7 +3,7 @@ package com.example.crawler.data.enums;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public enum SelectorType {
+public enum SelectorTypeEnum {
     ID("ID"),
     TAG("TAG"),
     CSS("CSS"),
@@ -17,8 +17,8 @@ public enum SelectorType {
         return value;
     }
 
-    public static SelectorType from(String value) {
-        for (SelectorType locatorTypeEnum : SelectorType.values()) {
+    public static SelectorTypeEnum from(String value) {
+        for (SelectorTypeEnum locatorTypeEnum : SelectorTypeEnum.values()) {
             if (locatorTypeEnum.value.equalsIgnoreCase(value)) {
                 return locatorTypeEnum;
             }

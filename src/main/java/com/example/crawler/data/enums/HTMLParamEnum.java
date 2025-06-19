@@ -3,29 +3,21 @@ package com.example.crawler.data.enums;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public enum ParameterEnum {
+public enum HTMLParamEnum {
 
-    //for click
     URL("url"),
+
     RETRY("retry"),
+
     RETRY_DELAY("retryDelay"),
 
-    //for get By
     SELECTOR("selector"),
-    SELECTOR_TYPE("selectorType"),
-    VALUE("value"),
-    ATTRIBUTE("attribute"),
 
-    //processor
-    START("start"),
-    END("end"),
-    OLD("old"),
-    NEW("new"),
-    PATTERN("pattern"),
-    GROUP("group"),
-    REPLACEMENT("replacement"),
-    INPUT_FORMAT("inputFormat"),
-    OUTPUT_FORMAT("outputFormat"),
+    SELECTOR_TYPE("selectorType"),
+
+    VALUE("value"),
+
+    ATTRIBUTE("attribute"),
 
     ;
 
@@ -34,5 +26,4 @@ public enum ParameterEnum {
     public String value() {
         return this.value;
     }
-
 }

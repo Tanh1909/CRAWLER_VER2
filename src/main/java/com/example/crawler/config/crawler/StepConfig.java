@@ -1,7 +1,7 @@
 package com.example.crawler.config.crawler;
 
 import com.example.crawler.config.crawler.field.FieldConfig;
-import com.example.crawler.data.enums.StepType;
+import com.example.crawler.data.enums.StepTypeEnum;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,7 +16,7 @@ public class StepConfig {
 
     private String name;
 
-    private StepType type;
+    private StepTypeEnum type;
 
     private Map<String, String> parameters = new HashMap<>();
 

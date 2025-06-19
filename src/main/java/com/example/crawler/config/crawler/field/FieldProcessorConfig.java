@@ -1,6 +1,6 @@
 package com.example.crawler.config.crawler.field;
 
-import com.example.crawler.data.enums.ProcessorTypeEnum;
+import com.example.crawler.data.enums.FieldProcessorTypeEnum;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +11,7 @@ import java.util.Map;
 @Setter
 public class FieldProcessorConfig {
 
-    private ProcessorTypeEnum type = ProcessorTypeEnum.NONE;
+    private FieldProcessorTypeEnum type = FieldProcessorTypeEnum.NONE;
 
     private Map<String, String> parameters = new HashMap<>();
 
