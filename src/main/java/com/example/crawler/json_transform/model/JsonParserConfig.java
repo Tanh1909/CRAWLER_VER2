@@ -12,6 +12,8 @@ public class JsonParserConfig {
 
     private String path;
 
+    private String fieldName;
+
     private List<JsonFieldConfig> fields;
 
     private List<JsonParserConfig> children;

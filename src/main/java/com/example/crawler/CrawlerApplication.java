@@ -1,16 +1,12 @@
 package com.example.crawler;
 
 import com.example.crawler.config.crawler.CrawlerConfig;
-import com.example.crawler.config.crawler.StepConfig;
-import com.example.crawler.config.crawler.context.CrawlerContext;
-import com.example.crawler.config.crawler.processor.ProcessorConfig;
-import com.example.crawler.config.selenium.WebDriverContext;
 import com.example.crawler.config.selenium.WebDriverFactory;
 import com.example.crawler.factory.processor.ProcessorFactory;
-import com.example.crawler.factory.step.StepAbstract;
 import com.example.crawler.factory.step.StepFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -18,7 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
-import java.util.List;
+import java.util.Map;
 
 @SpringBootApplication
 @EnableConfigurationProperties
@@ -65,7 +61,9 @@ public class CrawlerApplication {
 
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(json);
-            System.out.println(root.at("/users").asText());
+            ObjectNode objectNode = root.deepCopy();
+            Map.Entry<String, JsonNode> next = objectNode.fields().next();
+            System.out.println(next.getKey()+" - " +next.getValue());
         };
     }
 
