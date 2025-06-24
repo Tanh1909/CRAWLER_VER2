@@ -15,157 +15,175 @@ logging:
     com.example.crawler: debug
     org.openqa.selenium.devtools: off
 
-crawler:
-  crawler-type: html
-  steps:
-    - name: access page
-      type: get_url
-      parameters:
-        url: https://mbpc.amione.vn/login
-    - name: input username
-      type: send_key
-      parameters:
-        selector: username
-        selectorType: ID
-        value: NPC01_134
-    - name: input password
-      type: send_key
-      parameters:
-        selector: password
-        selectorType: ID
-        value: 123456@A
-    - name: click submit
-      type: click
-      parameters:
-        selector: btn_login_submit
-        selectorType: ID
-    - name: click close popup
-      type: click
-      parameters:
-        selector: g_conf_recloser_close
-        selectorType: ID
-    - name: extract html
-      type: extract_data
-      delay: 5
+json:
+  children:
+    - path: /data
       fields:
-        - field-name: imei
-          field-type: text
-          parameters:
-            selector: //*[@id="selectedCustomerRegion"]/span/div/div/div/strong
-            selectorType: XPATH
-          processors:
-            - type: regex_extract
-              parameters:
-                pattern: (?<=Thiết bị:\s*)\d+
-        - field-name: rushHour
-          field-type: number
-          parameters:
-            selector: //*[@id="singleCustomerTab1"]/div[3]/div/div/div[2]/table/tbody/tr[1]/td[2]
-            selectorType: XPATH
-        - field-name: normalHour
-          field-type: number
-          parameters:
-            selector: //*[@id="singleCustomerTab1"]/div[3]/div/div/div[2]/table/tbody/tr[1]/td[3]
-            selectorType: XPATH
-        - field-name: lowHour
-          field-type: number
-          parameters:
-            selector: //*[@id="singleCustomerTab1"]/div[3]/div/div/div[2]/table/tbody/tr[1]/td[4]
-            selectorType: XPATH
-        - field-name: time
-          field-type: date
-          parameters:
-            selector: //*[@id="singleCustomerTab1"]/div[1]/div/div[1]/div[1]/label
-            selectorType: XPATH
-          processors:
-            - type: regex_extract
-              parameters:
-                pattern: \d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2}
-    - name: click tab 2
-      type: click
-      parameters:
-        selector: //*[@id="3-NPC01_13403-25362"]/a
-        selectorType: XPATH
-    - name: extract html
-      type: extract_data
-      delay: 5
-      fields:
-        - field-name: imei
-          field-type: text
-          parameters:
-            selector: //*[@id="selectedCustomerRegion"]/span/div/div/div/strong
-            selectorType: XPATH
-          processors:
-            - type: regex_extract
-              parameters:
-                pattern: (?<=Thiết bị:\s*)\d+
-        - field-name: rushHour
-          field-type: number
-          parameters:
-            selector: //*[@id="singleCustomerTab1"]/div[3]/div/div/div[2]/table/tbody/tr[1]/td[2]
-            selectorType: XPATH
-        - field-name: normalHour
-          field-type: number
-          parameters:
-            selector: //*[@id="singleCustomerTab1"]/div[3]/div/div/div[2]/table/tbody/tr[1]/td[3]
-            selectorType: XPATH
-        - field-name: lowHour
-          field-type: number
-          parameters:
-            selector: //*[@id="singleCustomerTab1"]/div[3]/div/div/div[2]/table/tbody/tr[1]/td[4]
-            selectorType: XPATH
-        - field-name: time
-          field-type: date
-          parameters:
-            selector: //*[@id="singleCustomerTab1"]/div[1]/div/div[1]/div[1]/label
-            selectorType: XPATH
-          processors:
-            - type: regex_extract
-              parameters:
-                pattern: \d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2}
-    - name: click tab 3
-      type: click
-      parameters:
-        selector: //*[@id="3-NPC01_13404-25124"]/a
-        selectorType: XPATH
-    - name: extract html
-      type: extract_data
-      delay: 5
-      fields:
-        - field-name: imei
-          field-type: text
-          parameters:
-            selector: //*[@id="selectedCustomerRegion"]/span/div/div/div/strong
-            selectorType: XPATH
-          processors:
-            - type: regex_extract
-              parameters:
-                pattern: (?<=Thiết bị:\s*)\d+
-        - field-name: rushHour
-          field-type: number
-          parameters:
-            selector: //*[@id="singleCustomerTab1"]/div[3]/div/div/div[2]/table/tbody/tr[1]/td[2]
-            selectorType: XPATH
-        - field-name: normalHour
-          field-type: number
-          parameters:
-            selector: //*[@id="singleCustomerTab1"]/div[3]/div/div/div[2]/table/tbody/tr[1]/td[3]
-            selectorType: XPATH
-        - field-name: lowHour
-          field-type: number
-          parameters:
-            selector: //*[@id="singleCustomerTab1"]/div[3]/div/div/div[2]/table/tbody/tr[1]/td[4]
-            selectorType: XPATH
-        - field-name: time
-          field-type: date
-          parameters:
-            selector: //*[@id="singleCustomerTab1"]/div[1]/div/div[1]/div[1]/label
-            selectorType: XPATH
-          processors:
-            - type: regex_extract
-              parameters:
-                pattern: \d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2}
-  processors:
-    - type: kafka
-      parameters:
-        topic: SI_TOPIC_DATA
+        - source: id
+          target: id
+        - source: time_in_opposite_direction
+          target: time
+        - source: opposite_vehicle_image
+          target: image
+  fields:
+    - source: cam_id
+      target: camId
+      global: true
+    - source: type
+      target: type
+      global: true
+
+#crawler:
+#  crawler-type: html
+#  steps:
+#    - name: access page
+#      type: get_url
+#      parameters:
+#        url: https://mbpc.amione.vn/login
+#    - name: input username
+#      type: send_key
+#      parameters:
+#        selector: username
+#        selectorType: ID
+#        value: NPC01_134
+#    - name: input password
+#      type: send_key
+#      parameters:
+#        selector: password
+#        selectorType: ID
+#        value: 123456@A
+#    - name: click submit
+#      type: click
+#      parameters:
+#        selector: btn_login_submit
+#        selectorType: ID
+#    - name: click close popup
+#      type: click
+#      parameters:
+#        selector: g_conf_recloser_close
+#        selectorType: ID
+#    - name: extract html
+#      type: extract_data
+#      delay: 5
+#      fields:
+#        - field-name: imei
+#          field-type: text
+#          parameters:
+#            selector: //*[@id="selectedCustomerRegion"]/span/div/div/div/strong
+#            selectorType: XPATH
+#          processors:
+#            - type: regex_extract
+#              parameters:
+#                pattern: (?<=Thiết bị:\s*)\d+
+#        - field-name: rushHour
+#          field-type: number
+#          parameters:
+#            selector: //*[@id="singleCustomerTab1"]/div[3]/div/div/div[2]/table/tbody/tr[1]/td[2]
+#            selectorType: XPATH
+#        - field-name: normalHour
+#          field-type: number
+#          parameters:
+#            selector: //*[@id="singleCustomerTab1"]/div[3]/div/div/div[2]/table/tbody/tr[1]/td[3]
+#            selectorType: XPATH
+#        - field-name: lowHour
+#          field-type: number
+#          parameters:
+#            selector: //*[@id="singleCustomerTab1"]/div[3]/div/div/div[2]/table/tbody/tr[1]/td[4]
+#            selectorType: XPATH
+#        - field-name: time
+#          field-type: date
+#          parameters:
+#            selector: //*[@id="singleCustomerTab1"]/div[1]/div/div[1]/div[1]/label
+#            selectorType: XPATH
+#          processors:
+#            - type: regex_extract
+#              parameters:
+#                pattern: \d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2}
+#    - name: click tab 2
+#      type: click
+#      parameters:
+#        selector: //*[@id="3-NPC01_13403-25362"]/a
+#        selectorType: XPATH
+#    - name: extract html
+#      type: extract_data
+#      delay: 5
+#      fields:
+#        - field-name: imei
+#          field-type: text
+#          parameters:
+#            selector: //*[@id="selectedCustomerRegion"]/span/div/div/div/strong
+#            selectorType: XPATH
+#          processors:
+#            - type: regex_extract
+#              parameters:
+#                pattern: (?<=Thiết bị:\s*)\d+
+#        - field-name: rushHour
+#          field-type: number
+#          parameters:
+#            selector: //*[@id="singleCustomerTab1"]/div[3]/div/div/div[2]/table/tbody/tr[1]/td[2]
+#            selectorType: XPATH
+#        - field-name: normalHour
+#          field-type: number
+#          parameters:
+#            selector: //*[@id="singleCustomerTab1"]/div[3]/div/div/div[2]/table/tbody/tr[1]/td[3]
+#            selectorType: XPATH
+#        - field-name: lowHour
+#          field-type: number
+#          parameters:
+#            selector: //*[@id="singleCustomerTab1"]/div[3]/div/div/div[2]/table/tbody/tr[1]/td[4]
+#            selectorType: XPATH
+#        - field-name: time
+#          field-type: date
+#          parameters:
+#            selector: //*[@id="singleCustomerTab1"]/div[1]/div/div[1]/div[1]/label
+#            selectorType: XPATH
+#          processors:
+#            - type: regex_extract
+#              parameters:
+#                pattern: \d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2}
+#    - name: click tab 3
+#      type: click
+#      parameters:
+#        selector: //*[@id="3-NPC01_13404-25124"]/a
+#        selectorType: XPATH
+#    - name: extract html
+#      type: extract_data
+#      delay: 5
+#      fields:
+#        - field-name: imei
+#          field-type: text
+#          parameters:
+#            selector: //*[@id="selectedCustomerRegion"]/span/div/div/div/strong
+#            selectorType: XPATH
+#          processors:
+#            - type: regex_extract
+#              parameters:
+#                pattern: (?<=Thiết bị:\s*)\d+
+#        - field-name: rushHour
+#          field-type: number
+#          parameters:
+#            selector: //*[@id="singleCustomerTab1"]/div[3]/div/div/div[2]/table/tbody/tr[1]/td[2]
+#            selectorType: XPATH
+#        - field-name: normalHour
+#          field-type: number
+#          parameters:
+#            selector: //*[@id="singleCustomerTab1"]/div[3]/div/div/div[2]/table/tbody/tr[1]/td[3]
+#            selectorType: XPATH
+#        - field-name: lowHour
+#          field-type: number
+#          parameters:
+#            selector: //*[@id="singleCustomerTab1"]/div[3]/div/div/div[2]/table/tbody/tr[1]/td[4]
+#            selectorType: XPATH
+#        - field-name: time
+#          field-type: date
+#          parameters:
+#            selector: //*[@id="singleCustomerTab1"]/div[1]/div/div[1]/div[1]/label
+#            selectorType: XPATH
+#          processors:
+#            - type: regex_extract
+#              parameters:
+#                pattern: \d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2}
+#  processors:
+#    - type: kafka
+#      parameters:
+#        topic: SI_TOPIC_DATA

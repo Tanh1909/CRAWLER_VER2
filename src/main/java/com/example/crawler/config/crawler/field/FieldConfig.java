@@ -4,10 +4,7 @@ import com.example.crawler.data.enums.FieldTypeEnum;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Getter
 @Setter
@@ -31,6 +28,10 @@ public class FieldConfig {
 
     public String getParameter(String key, String defaultValue) {
         return parameters.getOrDefault(key, defaultValue);
+    }
+
+    public List<FieldProcessorConfig> getProcessors() {
+        return processors == null ? Collections.emptyList() : processors;
     }
 
 
