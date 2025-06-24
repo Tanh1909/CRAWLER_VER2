@@ -18,8 +18,6 @@ public class FieldConfig {
 
     private List<FieldProcessorConfig> processors = new ArrayList<>();
 
-    private boolean isArray = false;
-
     private boolean isGlobal = false;
 
     public String getParameter(String key) {

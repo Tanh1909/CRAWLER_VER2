@@ -1,6 +1,7 @@
 package com.example.crawler.config.crawler.context;
 
 import com.example.crawler.data.model.CrawlerError;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.Getter;
@@ -26,10 +27,12 @@ public class CrawlerContext {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public void addGlobalField(String key, Object value) {
+        log.debug("Add global field[{} - {}]", key, value);
         globalFields.put(key, value);
     }
 
     public void addExtractedData(ObjectNode data) {
+        log.debug("Add data to crawler context: {}", data);
         this.extractedData.add(data);
     }
 
@@ -37,8 +40,8 @@ public class CrawlerContext {
         this.stepErrors.add(error);
     }
 
-    public List<ObjectNode> getResult() {
-        List<ObjectNode> finalData = new ArrayList<>();
+    public List<JsonNode> getResult() {
+        List<JsonNode> finalData = new ArrayList<>();
         for (ObjectNode data : extractedData) {
             ObjectNode objectNode = objectMapper.createObjectNode();
             globalFields.forEach((key, value) -> {

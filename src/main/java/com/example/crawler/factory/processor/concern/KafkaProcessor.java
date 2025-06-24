@@ -1,13 +1,12 @@
 package com.example.crawler.factory.processor.concern;
 
-import com.example.crawler.config.crawler.context.CrawlerContext;
+import com.example.crawler.config.crawler.context.CrawlerContextHolder;
 import com.example.crawler.config.crawler.processor.ProcessorConfig;
-import com.example.crawler.config.selenium.WebDriverContext;
 import com.example.crawler.data.enums.ProcessorParamEnum;
 import com.example.crawler.data.enums.ProcessorTypeEnum;
 import com.example.crawler.factory.processor.ProcessorAbstract;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
@@ -27,10 +26,10 @@ public class KafkaProcessor extends ProcessorAbstract {
     }
 
     @Override
-    protected void process(WebDriverContext webDriverContext, CrawlerContext crawlerContext, ProcessorConfig processorConfig) {
+    protected void process(ProcessorConfig processorConfig) {
         String topic = processorConfig.getParam(ProcessorParamEnum.TOPIC.value());
         String key = processorConfig.getParam(ProcessorParamEnum.KEY.value(), null);
-        List<ObjectNode> result = crawlerContext.getResult();
+        List<JsonNode> result = CrawlerContextHolder.getResult();
         log.info("//PUSH TO KAFKA [topic: {}, key {}] data: {}", topic, key, objectMapper.valueToTree(result));
     }
 

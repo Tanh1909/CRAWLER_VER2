@@ -1,8 +1,8 @@
 package com.example.crawler.factory.step;
 
 import com.example.crawler.config.crawler.StepConfig;
-import com.example.crawler.config.crawler.context.CrawlerContext;
-import com.example.crawler.config.selenium.WebDriverContext;
+import com.example.crawler.config.crawler.context.CrawlerContextHolder;
+import com.example.crawler.config.selenium.context.WebDriverContext;
 import com.example.crawler.data.enums.HTMLParamEnum;
 import com.example.crawler.data.enums.SelectorTypeEnum;
 import com.example.crawler.data.enums.StepTypeEnum;
@@ -12,6 +12,7 @@ import lombok.extern.log4j.Log4j2;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.time.Duration;
 
@@ -20,16 +21,17 @@ public abstract class StepAbstract {
 
     public abstract StepTypeEnum getType();
 
-    public void execute(Integer stepNum, WebDriverContext webDriverContext, StepConfig stepConfig, CrawlerContext crawlerContext) {
+    public void execute(WebDriverContext webDriverContext, Integer stepNum, StepConfig stepConfig) {
+        RemoteWebDriver webDriver = webDriverContext.getWebDriver();
         String sessionId = webDriverContext.getSessionId();
         String stepName = stepConfig.getName();
         StepTypeEnum stepType = stepConfig.getType();
         try {
             log.info("[{}] - [StartStep.{}] Start execute step [name: {}, type: {}]", sessionId, stepNum, stepName, stepType);
             applyDelay(stepConfig, sessionId);
-            process(webDriverContext, stepConfig, crawlerContext);
+            process(webDriver, stepConfig);
         } catch (Exception e) {
-            crawlerContext.addStepError(new CrawlerError(stepNum, stepName, e.getMessage(), e));
+            CrawlerContextHolder.addStepError(new CrawlerError(stepNum, stepName, e.getMessage(), e));
             log.error("[{}] - [ErrorStep.{}] Error when execute step [name: {}, type: {}]", sessionId, stepNum, stepName, stepType);
         } finally {
             log.info("[{}] - [EndStep.{}] End execute step", sessionId, stepNum);
@@ -61,6 +63,6 @@ public abstract class StepAbstract {
     }
 
 
-    public abstract void process(WebDriverContext context, StepConfig stepConfig, CrawlerContext crawlerContext);
+    public abstract void process(RemoteWebDriver webDriver, StepConfig stepConfig);
 
 }

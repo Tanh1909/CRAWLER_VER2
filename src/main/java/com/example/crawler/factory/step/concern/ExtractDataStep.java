@@ -1,10 +1,9 @@
 package com.example.crawler.factory.step.concern;
 
 import com.example.crawler.config.crawler.StepConfig;
-import com.example.crawler.config.crawler.context.CrawlerContext;
+import com.example.crawler.config.crawler.context.CrawlerContextHolder;
 import com.example.crawler.config.crawler.field.FieldConfig;
 import com.example.crawler.config.crawler.field.FieldProcessorConfig;
-import com.example.crawler.config.selenium.WebDriverContext;
 import com.example.crawler.data.enums.HTMLParamEnum;
 import com.example.crawler.data.enums.StepTypeEnum;
 import com.example.crawler.factory.step.StepAbstract;
@@ -38,9 +37,7 @@ public class ExtractDataStep extends StepAbstract {
 
     @SneakyThrows
     @Override
-    public void process(WebDriverContext context, StepConfig stepConfig, CrawlerContext crawlerContext) {
-        String sessionId = context.getSessionId();
-        RemoteWebDriver webDriver = context.getWebDriver();
+    public void process(RemoteWebDriver webDriver, StepConfig stepConfig) {
         List<FieldConfig> fieldConfigs = stepConfig.getFields();
         ObjectNode objectNode = objectMapper.createObjectNode();
         for (FieldConfig fieldConfig : fieldConfigs) {
@@ -60,16 +57,14 @@ public class ExtractDataStep extends StepAbstract {
                 }
                 Object objectValue = fieldProcessor.convertFieldType(rawValue, fieldConfig.getFieldType());
                 if (fieldConfig.isGlobal()) {
-                    log.debug("[{}] add global field[{} - {}]", sessionId, fieldName, objectValue);
-                    crawlerContext.addGlobalField(fieldName, objectValue);
+                    CrawlerContextHolder.addGlobalField(fieldName, objectValue);
                 } else {
                     objectNode.set(fieldName, objectMapper.valueToTree(objectValue));
                 }
             } catch (Exception e) {
-                log.error("[{}] Error when extract data [{}] . Message: {}", sessionId, objectMapper.writeValueAsString(fieldConfig), e.getMessage());
+                log.error("Error when extract data [{}] . Message: {}", objectMapper.writeValueAsString(fieldConfig), e.getMessage());
             }
         }
-        log.debug("[{}] add data to crawler context: {}", sessionId, objectNode);
-        crawlerContext.addExtractedData(objectNode);
+        CrawlerContextHolder.addExtractedData(objectNode);
     }
 }

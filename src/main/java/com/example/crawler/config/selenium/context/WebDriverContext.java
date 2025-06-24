@@ -1,5 +1,6 @@
-package com.example.crawler.config.selenium;
+package com.example.crawler.config.selenium.context;
 
+import com.example.crawler.config.selenium.SeleniumProperties;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
