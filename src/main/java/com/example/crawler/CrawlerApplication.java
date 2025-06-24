@@ -5,6 +5,7 @@ import com.example.crawler.config.selenium.WebDriverFactory;
 import com.example.crawler.factory.processor.ProcessorFactory;
 import com.example.crawler.factory.step.StepFactory;
 import com.example.crawler.json_transform.model.JsonConfig;
+import com.example.crawler.json_transform.model.JsonParserConfig;
 import com.example.crawler.json_transform.processor.JsonParserProcessor;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,7 +36,7 @@ public class CrawlerApplication {
     private JsonParserProcessor jsonParserProcessor;
 
     @Autowired
-    private JsonConfig jsonConfig;
+    private JsonParserConfig jsonConfig;
 
     public static void main(String[] args) {
         SpringApplication.run(CrawlerApplication.class, args);

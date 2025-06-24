@@ -3,8 +3,10 @@ package com.example.crawler.json_transform.processor;
 import com.example.crawler.config.crawler.field.FieldProcessorConfig;
 import com.example.crawler.data.enums.FieldTypeEnum;
 import com.example.crawler.json_transform.context.JsonParseContextHolder;
-import com.example.crawler.json_transform.model.JsonFieldConfig;
 import com.example.crawler.json_transform.model.JsonConfig;
+import com.example.crawler.json_transform.model.JsonFieldConfig;
+import com.example.crawler.json_transform.model.JsonGlobalConfig;
+import com.example.crawler.json_transform.model.JsonParserConfig;
 import com.example.crawler.service.field.FieldProcessor;
 import com.example.crawler.utils.JsonUtils;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -27,16 +29,21 @@ public class DefaultJsonParserProcessor implements JsonParserProcessor {
 
     private final ObjectMapper objectMapper;
 
+
     @Override
-    public JsonNode process(JsonNode rawData, JsonConfig config) {
+    public JsonNode process(JsonNode rawData, JsonParserConfig config) {
         try {
             log.debug("Start process rawData: {}", rawData.toPrettyString());
             if (JsonUtils.isEmpty(rawData)) {
                 log.debug("RawData is empty");
                 return rawData;
             }
+            //Handle Global
+            this.processGlobalConfig(rawData, config.getGlobals());
+            //Handle rawData
             int recursionDepth = 0;
-            JsonNode processData = processConfigRecursively(rawData, config, recursionDepth);
+            JsonNode processData = processConfigRecursively(rawData, config.getJson(), recursionDepth);
+            //Merge Global with data
             JsonNode result = JsonParseContextHolder.getResult(processData);
             log.debug("Result: {}", result);
             return result;
@@ -48,6 +55,31 @@ public class DefaultJsonParserProcessor implements JsonParserProcessor {
             log.debug("End process");
         }
 
+    }
+
+    private void processGlobalConfig(JsonNode node, List<JsonGlobalConfig> globalConfigs) {
+        if (CollectionUtils.isEmpty(globalConfigs)) {
+            log.debug("Not process global config because configs is empty");
+        }
+        for (JsonGlobalConfig globalConfig : globalConfigs) {
+            String path = globalConfig.getPath();
+            List<JsonFieldConfig> fieldConfigs = globalConfig.getFields();
+            JsonNode jsonNode = JsonUtils.atPath(node, path);
+            addGlobalField(jsonNode, fieldConfigs);
+        }
+    }
+
+    private void addGlobalField(JsonNode node, List<JsonFieldConfig> fieldConfigs) {
+        for (JsonFieldConfig fieldConfig : fieldConfigs) {
+            String target = fieldConfig.getTarget();
+            String source = fieldConfig.getSource();
+            FieldTypeEnum type = fieldConfig.getType();
+            List<FieldProcessorConfig> processorConfigs = fieldConfig.getProcessors();
+            JsonNode value = node.get(source);
+            JsonNode finalValue = processRawValue(value, processorConfigs, type);
+            log.debug("Add global field value [source: {} - target: {}] {} -> {} ", source, target, value, finalValue);
+            JsonParseContextHolder.addGlobalField(target, finalValue);
+        }
     }
 
     private JsonNode processConfigRecursively(JsonNode node, JsonConfig config, int depth) {
@@ -97,11 +129,6 @@ public class DefaultJsonParserProcessor implements JsonParserProcessor {
             JsonNode value = node.get(source);
             JsonNode finalValue = processRawValue(value, processorConfigs, type);
             log.debug("Process field value [source: {} - target: {}] {} -> {} ", source, target, value, finalValue);
-            if (fieldConfig.isGlobal()) {
-                log.debug("Add global field!");
-                JsonParseContextHolder.addGlobalField(target, finalValue);
-                continue;
-            }
             objectNode.set(target, finalValue);
         }
         log.debug("Json after get from fieldConfig: {}", objectNode);

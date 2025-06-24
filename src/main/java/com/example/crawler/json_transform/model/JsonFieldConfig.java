@@ -16,8 +16,6 @@ public class JsonFieldConfig {
 
     private String target;
 
-    private boolean global;
-
     private FieldTypeEnum type;
 
     private List<FieldProcessorConfig> processors;

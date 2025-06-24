@@ -15,23 +15,22 @@ logging:
     com.example.crawler: debug
     org.openqa.selenium.devtools: off
 
-json:
-  children:
-    - path: /data
-      fields:
-        - source: id
-          target: id
-        - source: time_in_opposite_direction
-          target: time
-        - source: opposite_vehicle_image
-          target: image
-  fields:
-    - source: cam_id
-      target: camId
-      global: true
-    - source: type
-      target: type
-      global: true
+parser:
+  json:
+    path: /data
+    fields:
+      - source: id
+        target: id
+      - source: time_in_opposite_direction
+        target: time
+      - source: opposite_vehicle_image
+        target: image
+  globals:
+    - fields:
+        - source: cam_id
+          target: camId
+        - source: type
+          target: type
 
 #crawler:
 #  crawler-type: html
