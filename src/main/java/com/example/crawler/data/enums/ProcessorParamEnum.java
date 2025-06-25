@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public enum ProcessorParamEnum {
-    //KAFKA
+
     TOPIC("topic"),
     KEY("key");
 

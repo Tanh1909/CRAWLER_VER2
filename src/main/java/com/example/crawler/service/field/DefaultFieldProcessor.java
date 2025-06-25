@@ -11,8 +11,10 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
@@ -121,6 +123,24 @@ public class DefaultFieldProcessor implements FieldProcessor {
 
     public static LocalDateTime parseToLocalDateTime(String value) {
         DateTimeFormatter formatter;
+
+        // Epoch time detection
+        if (value.matches("^\\d{10,}$")) { // Milliseconds or seconds (but > 10 digits likely milliseconds)
+            long epoch = Long.parseLong(value);
+            if (epoch > 9999999999L) { // Milliseconds
+                return Instant.ofEpochMilli(epoch).atZone(ZoneId.systemDefault()).toLocalDateTime();
+            } else { // Seconds
+                return Instant.ofEpochSecond(epoch).atZone(ZoneId.systemDefault()).toLocalDateTime();
+            }
+        } else if (value.matches("^[0-9]*\\.?[0-9]+[eE][+-]?[0-9]+$")) { // Scientific notation
+            double epochDouble = Double.parseDouble(value);
+            long epochMillis = (long) epochDouble;
+            if (epochMillis > 9999999999L) { // Milliseconds
+                return Instant.ofEpochMilli(epochMillis).atZone(ZoneId.systemDefault()).toLocalDateTime();
+            } else { // Seconds
+                return Instant.ofEpochSecond(epochMillis).atZone(ZoneId.systemDefault()).toLocalDateTime();
+            }
+        }
 
         // LocalDateTime formats (có cả ngày + giờ)
         if (value.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}"))

@@ -23,6 +23,7 @@ parser:
         target: id
       - source: time_in_opposite_direction
         target: time
+        type: DATE
       - source: opposite_vehicle_image
         target: image
   globals:

@@ -19,7 +19,7 @@ public enum ProcessorTypeEnum {
                 return processorTypeEnum;
             }
         }
-        throw new IllegalArgumentException("not found processor type: " + value);
+        throw new IllegalArgumentException("Not found processor type: " + value);
     }
 
 }
