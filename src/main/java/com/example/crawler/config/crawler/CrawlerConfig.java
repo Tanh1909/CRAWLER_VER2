@@ -7,7 +7,7 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Getter
@@ -18,8 +18,21 @@ public class CrawlerConfig {
 
     private CrawlerTypeEnum crawlerType;
 
-    private List<StepConfig> steps = new ArrayList<>();
+    private List<ApiConfig> apiConfigs;
 
-    private List<ProcessorConfig> processors = new ArrayList<>();
+    private List<StepConfig> steps;
 
+    private List<ProcessorConfig> processors;
+
+    public List<StepConfig> getSteps() {
+        return steps == null ? Collections.emptyList() : steps;
+    }
+
+    public List<ProcessorConfig> getProcessors() {
+        return processors == null ? Collections.emptyList() : processors;
+    }
+
+    public List<ApiConfig> getApiConfigs() {
+        return apiConfigs == null ? Collections.emptyList() : apiConfigs;
+    }
 }

@@ -4,7 +4,9 @@ import com.example.crawler.data.enums.FieldTypeEnum;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -14,9 +16,9 @@ public class FieldConfig {
 
     private FieldTypeEnum fieldType = FieldTypeEnum.TEXT;
 
-    private Map<String, String> parameters = new HashMap<>();
+    private Map<String, String> parameters;
 
-    private List<FieldProcessorConfig> processors = new ArrayList<>();
+    private List<FieldProcessorConfig> processors;
 
     private boolean isGlobal = false;
 
@@ -32,5 +34,7 @@ public class FieldConfig {
         return processors == null ? Collections.emptyList() : processors;
     }
 
-
+    public Map<String, String> getParameters() {
+        return parameters == null ? Collections.emptyMap() : parameters;
+    }
 }

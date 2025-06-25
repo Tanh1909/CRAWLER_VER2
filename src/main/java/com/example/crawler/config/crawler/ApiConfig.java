@@ -1,17 +1,15 @@
 package com.example.crawler.config.crawler;
 
+import com.example.crawler.json_transform.model.JsonParserConfig;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
 public class ApiConfig {
 
-    private List<String> urlPatterns = new ArrayList<>();
+    private String urlPattern;
 
-    private Integer timeOutSeconds = 30;
+    private JsonParserConfig config;
 
 }

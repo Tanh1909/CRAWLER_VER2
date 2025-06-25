@@ -5,8 +5,7 @@ import com.example.crawler.data.enums.StepTypeEnum;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -14,17 +13,21 @@ import java.util.Map;
 @Setter
 public class StepConfig {
 
+    private static final Integer DEFAULT_DELAY = 1; //seconds
+
+    private static final Integer DEFAULT_TIMEOUT = 10; //seconds
+
     private String name;
 
     private StepTypeEnum type;
 
-    private Map<String, String> parameters = new HashMap<>();
+    private Map<String, String> parameters;
 
-    private List<FieldConfig> fields = new ArrayList<>();
+    private List<FieldConfig> fields;
 
-    private int delay = 1; //second
+    private Integer delay;
 
-    private int timeOut = 10; //second
+    private Integer timeOut;
 
     public String getParameter(String key) {
         return parameters.get(key);
@@ -42,4 +45,19 @@ public class StepConfig {
         }
     }
 
+    public Map<String, String> getParameters() {
+        return parameters == null ? Collections.emptyMap() : parameters;
+    }
+
+    public List<FieldConfig> getFields() {
+        return fields == null ? Collections.emptyList() : fields;
+    }
+
+    public int getDelay() {
+        return delay == null ? DEFAULT_DELAY : delay;
+    }
+
+    public int getTimeOut() {
+        return timeOut == null ? DEFAULT_TIMEOUT : timeOut;
+    }
 }
