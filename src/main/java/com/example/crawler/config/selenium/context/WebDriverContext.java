@@ -1,6 +1,8 @@
 package com.example.crawler.config.selenium.context;
 
+import com.example.crawler.config.crawler.context.devtools.DevtoolsContextHolder;
 import com.example.crawler.config.selenium.SeleniumProperties;
+import com.example.crawler.service.devtool.IDevToolsService;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
@@ -26,7 +28,7 @@ public class WebDriverContext implements AutoCloseable {
 
     private final String sessionId;
 
-    public WebDriverContext(RemoteWebDriver webDriver, SeleniumProperties seleniumProperties) {
+    public WebDriverContext(RemoteWebDriver webDriver, SeleniumProperties seleniumProperties, IDevToolsService devToolsService) {
         this.seleniumProperties = seleniumProperties;
         this.webDriver = webDriver;
         SeleniumProperties.TimeOut timeOut = seleniumProperties.getTimeOut();
@@ -38,6 +40,7 @@ public class WebDriverContext implements AutoCloseable {
         this.devTools = ((HasDevTools) (new Augmenter().augment(webDriver))).getDevTools();
         this.sessionId = webDriver.getSessionId().toString();
         this.devTools.createSession();
+        devToolsService.handleDevTools(devTools);
         devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
 
     }
@@ -54,6 +57,7 @@ public class WebDriverContext implements AutoCloseable {
     }
 
     private void closeDevTools() {
+        DevtoolsContextHolder.clearContext();
         if (devTools != null) {
             devTools.close();
         }
@@ -65,6 +69,6 @@ public class WebDriverContext implements AutoCloseable {
             log.info("[{}] CLOSE WEB DRIVER SUCCESSFULLY!!!", sessionId);
             return;
         }
-        log.debug("web driver is null!!!");
+        log.debug("Web driver is null!!!");
     }
 }

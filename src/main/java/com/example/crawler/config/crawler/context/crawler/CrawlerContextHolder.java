@@ -1,4 +1,4 @@
-package com.example.crawler.config.crawler.context;
+package com.example.crawler.config.crawler.context.crawler;
 
 import com.example.crawler.data.model.CrawlerError;
 import com.fasterxml.jackson.databind.JsonNode;

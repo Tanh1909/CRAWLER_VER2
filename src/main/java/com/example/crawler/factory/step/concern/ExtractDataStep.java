@@ -1,7 +1,7 @@
 package com.example.crawler.factory.step.concern;
 
 import com.example.crawler.config.crawler.StepConfig;
-import com.example.crawler.config.crawler.context.CrawlerContextHolder;
+import com.example.crawler.config.crawler.context.crawler.CrawlerContextHolder;
 import com.example.crawler.config.crawler.field.FieldConfig;
 import com.example.crawler.config.crawler.field.FieldProcessorConfig;
 import com.example.crawler.data.enums.HTMLParamEnum;

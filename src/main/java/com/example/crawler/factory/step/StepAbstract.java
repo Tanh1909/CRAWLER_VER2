@@ -1,7 +1,7 @@
 package com.example.crawler.factory.step;
 
 import com.example.crawler.config.crawler.StepConfig;
-import com.example.crawler.config.crawler.context.CrawlerContextHolder;
+import com.example.crawler.config.crawler.context.crawler.CrawlerContextHolder;
 import com.example.crawler.config.selenium.context.WebDriverContext;
 import com.example.crawler.data.enums.HTMLParamEnum;
 import com.example.crawler.data.enums.SelectorTypeEnum;

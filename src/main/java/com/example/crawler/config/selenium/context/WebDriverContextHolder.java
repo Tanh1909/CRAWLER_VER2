@@ -16,7 +16,6 @@ public class WebDriverContextHolder {
 
     private final WebDriverFactory webDriverFactory;
 
-
     private static final ThreadLocal<WebDriverContext> contextManager = new ThreadLocal<>();
 
     public WebDriverContext getContext() {

@@ -38,15 +38,18 @@ crawler:
   steps:
     - name: access page
       type: get_url
+      delay: 3
       parameters:
         url: https://mbpc.amione.vn/login
     - name: input username
       type: send_key
+      delay: 3
       parameters:
         selector: username
         selectorType: ID
         value: NPC01_134
     - name: input password
+      delay: 3
       type: send_key
       parameters:
         selector: password
@@ -54,11 +57,13 @@ crawler:
         value: 123456@A
     - name: click submit
       type: click
+      delay: 3
       parameters:
         selector: btn_login_submit
         selectorType: ID
     - name: click close popup
       type: click
+      delay: 3
       parameters:
         selector: g_conf_recloser_close
         selectorType: ID
@@ -100,6 +105,7 @@ crawler:
               parameters:
                 pattern: \d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2}
     - name: click tab 2
+      delay: 3
       type: click
       parameters:
         selector: //*[@id="3-NPC01_13403-25362"]/a
@@ -143,6 +149,7 @@ crawler:
                 pattern: \d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2}
     - name: click tab 3
       type: click
+      delay: 3
       parameters:
         selector: //*[@id="3-NPC01_13404-25124"]/a
         selectorType: XPATH

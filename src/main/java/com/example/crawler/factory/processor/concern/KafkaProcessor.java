@@ -1,6 +1,6 @@
 package com.example.crawler.factory.processor.concern;
 
-import com.example.crawler.config.crawler.context.CrawlerContextHolder;
+import com.example.crawler.config.crawler.context.crawler.CrawlerContextHolder;
 import com.example.crawler.config.crawler.processor.ProcessorConfig;
 import com.example.crawler.data.enums.ProcessorParamEnum;
 import com.example.crawler.data.enums.ProcessorTypeEnum;
