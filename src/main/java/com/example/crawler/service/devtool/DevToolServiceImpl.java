@@ -79,7 +79,7 @@ public class DevToolServiceImpl implements IDevToolsService {
             networkModel.setResponseBody(responseBody);
             networkModel.setComplete(true);
         } catch (Exception e) {
-            log.error("Error when getResponseBody[requestId: {}]: {}:", networkModel.getRequestIdString(), e.getMessage());
+            log.trace("Error when getResponseBody[requestId: {}]: {}:", networkModel.getRequestIdString(), e.getMessage());
             networkModel.setResponseBody("");
             networkModel.setError(true);
         }
